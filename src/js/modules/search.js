@@ -1,4 +1,6 @@
 import { bindEvent } from '../common.js'
+import searchService from '../searchService.js'
+import result from './result.js'
 
 const template = data => `
     <div class="search-container">
@@ -34,52 +36,89 @@ const template = data => `
     </div>
 `
 
-const data = {
+const INPUT_TERM_VALUE_VALIDATE = "jack";
+const INPUT_LIMIT_VALUE_VALIDATE = 4;
+
+var data = {
     heading: 'Find your artist below',
     buttonText: 'Search Artist'
 }
 
-const _render = (parentId) => {
-    var parent = document.getElementById(parentId);
-    if (parent) {
-        parent.innerHTML = template(data);
+/**
+ * Function to render module template in DOM conatiner
+ * @param {String} containerId - DOM ID of parent container
+ */
+const _render = (containerId) => {
+    var container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = template(data);
     }
     _bindEvents();
 }
 
+/**
+ * Bind all DOM event related to this module
+ */
 const _bindEvents = () => {
     // Event binding on button click
     bindEvent('main-button', 'click', _openModel);
-    //bindEvent('model-mask', 'click', _closeModel);
     bindEvent('close-model', 'click', _closeModel);
     bindEvent('serach-button', 'click', _validateSearch);
 }
 
+/**
+ * To open search pop up
+ */
 const _openModel = () => {
     var model = document.getElementById("model");
     model.style.display="block";
 }
 
+/**
+ * To close search pop up
+ */
 const _closeModel = () => {
     var model = document.getElementById("model");
     model.style.display="none";
 }
 
+/**
+ * To validate search data.
+ * Currenty fixed data supported for validation success
+ */
 const _validateSearch = () => {
     var artistNameDom = document.getElementById("artist-name");
     var trackCountDom = document.getElementById("track-count");
     var messageDom = document.getElementById("message");
     messageDom.innerHTML=""
-    console.log(artistNameDom, trackCountDom, messageDom);
-    if (artistNameDom.value === "Dharmendra" && trackCountDom.value === parseInt(4)) {
-        _searchStart();
+    if (artistNameDom.value && parseInt(trackCountDom.value) !== NaN && _isRestrictedInput(artistNameDom, trackCountDom)) {
+        _searchStart({
+            term: artistNameDom.value, 
+            limit: parseInt(trackCountDom.value)
+        });
     } else {
-        messageDom.innerHTML = "Wrong input";
+        messageDom.innerHTML = "Please make sure artist name is "+ INPUT_TERM_VALUE_VALIDATE +" and count is "+ INPUT_LIMIT_VALUE_VALIDATE;
     }
 }
 
-const _searchStart = () => {
+const _isRestrictedInput = (artistNameDom, trackCountDom) => {
+    return artistNameDom.value === INPUT_TERM_VALUE_VALIDATE && parseInt(trackCountDom.value) === INPUT_LIMIT_VALUE_VALIDATE;
+}
 
+/**
+ * To invoke search service and load reasults on response
+ * @param {object} serachObj 
+ */
+const _searchStart = (serachObj) => {
+    result.updateRequest(serachObj);
+    searchService.search(serachObj).then(response => {
+        result.update(response);
+        result.render("app");
+        // We could also use
+        // result.render("app", response);
+    }).catch(error => {
+        console.log("response error", error);
+    })
 }
 
 export default {
