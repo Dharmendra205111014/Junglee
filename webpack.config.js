@@ -4,9 +4,6 @@ var path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-
-
 module.exports = {
     entry: {
         app : './src/main.js'
@@ -35,20 +32,14 @@ module.exports = {
                     options: { presets: ['es2015'] }
                 }
             },
-            { 
-                test: /\.(ttf)$/, 
-                loader: 'file-loader?&name=css/fonts/[hash:6].[ext]'
+            {
+                test: /\.(ttf)$/,
+                loader: 'url-loader?&name=css/fonts/[hash:6].[ext]'
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
                 use: [
-                  'file-loader?name=images/[hash:6].[ext]',
-                  {
-                    loader: 'image-webpack-loader',
-                    options: {
-                      bypassOnDebug: true,
-                    },
-                  },
+                  'url-loader?name=images/[hash:6].[ext]',
                 ],
               }
         ]
@@ -65,10 +56,6 @@ module.exports = {
             favicon: './src/images/index.ico',
             title: 'Assignment',
             inject: 'body'
-        }),
-        new UglifyJSPlugin({
-            sourceMap: true,
-            uglifyOptions: { ecma: 8 },
         })
     ]
 }
