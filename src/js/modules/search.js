@@ -17,16 +17,17 @@ const template = data => `
                     <div class="form">
                         <div class="form-input-group">
                             <div class="left width-25"><label for="artist-name">Artist name</label></div>
-                            <div class="right width-75"><input id="artist-name" type="text" value=""></div>
+                            <div class="right width-75"><input id="artist-name" type="text" value="" placeholder="Enter Artist name"></div>
                         </div>
                         <div class="form-input-group">
                             <div class="left width-25"><label for="track-count">No. of tracks</label></div>
-                            <div class="right width-75"><input id="track-count" type="number" value="" min="1" max="10"></div>
+                            <div class="right width-75"><input id="track-count" type="number" value="" min="1" max="10" placeholder="Enter tracks count"></div>
                         </div>
                         <div class="form-input-group">
                             <div id="message" class="error"></div>
                             <div class="right width-75">
                                 <button id="serach-button" class="button-success">Search</button>
+                                <button id="loader" class="loader"></button>
                             </div>
                         </div>
                     </div>
@@ -53,6 +54,7 @@ const _render = (containerId) => {
     if (container) {
         container.innerHTML = template(data);
     }
+    _loading(false);
     _bindEvents();
 }
 
@@ -71,7 +73,10 @@ const _bindEvents = () => {
  */
 const _openModel = () => {
     var model = document.getElementById("model");
-    model.style.display="block";
+    model.classList.add("open");
+    model.classList.remove("close");
+    _loading(false);
+    _clearSearch();
 }
 
 /**
@@ -79,7 +84,45 @@ const _openModel = () => {
  */
 const _closeModel = () => {
     var model = document.getElementById("model");
-    model.style.display="none";
+    model.classList.add("close");
+    model.classList.remove("open");
+}
+
+/**
+ * To clear search fields
+ */
+const _clearSearch = () => {
+    var artistNameDom = document.getElementById("artist-name");
+    var trackCountDom = document.getElementById("track-count");
+    var messageDom = document.getElementById("message");
+    artistNameDom.value="";
+    trackCountDom.value="";
+    messageDom.innerHTML="";
+}
+
+/**
+ * To display loader
+ * @param {boolean} flag 
+ */
+const _loading = (flag) => {
+    var artistNameDom = document.getElementById("artist-name");
+    var trackCountDom = document.getElementById("track-count");
+    var serachButton = document.getElementById("serach-button");
+    var loader = document.getElementById("loader");
+    var messageDom = document.getElementById("message");
+
+    if (flag === true) {
+        artistNameDom.classList.add("disabled");
+        trackCountDom.classList.add("disabled");
+        serachButton.classList.add("disabled");
+        loader.style.display="initial";
+        messageDom.innerHTML="";
+    } else {
+        artistNameDom.classList.remove("disabled");
+        trackCountDom.classList.remove("disabled");
+        serachButton.classList.remove("disabled");
+        loader.style.display="none";
+    }
 }
 
 /**
@@ -91,12 +134,14 @@ const _validateSearch = () => {
     var trackCountDom = document.getElementById("track-count");
     var messageDom = document.getElementById("message");
     messageDom.innerHTML=""
+    _loading(true);
     if (artistNameDom.value && parseInt(trackCountDom.value) !== NaN && _isRestrictedInput(artistNameDom, trackCountDom)) {
         _searchStart({
             term: artistNameDom.value, 
             limit: parseInt(trackCountDom.value)
         });
     } else {
+        _loading(false);
         messageDom.innerHTML = "Please make sure artist name is "+ INPUT_TERM_VALUE_VALIDATE +" and count is "+ INPUT_LIMIT_VALUE_VALIDATE;
     }
 }
@@ -112,6 +157,7 @@ const _isRestrictedInput = (artistNameDom, trackCountDom) => {
 const _searchStart = (serachObj) => {
     result.updateRequest(serachObj);
     searchService.search(serachObj).then(response => {
+        _loading(false);
         result.update(response);
         result.render("app");
         // We could also use

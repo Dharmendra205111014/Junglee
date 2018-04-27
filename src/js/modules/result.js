@@ -4,11 +4,11 @@ import search from './search.js'
 const template = data => `<div class="results-container">
     <div class="result-header">
         <h1>
-            Search results for ${data.term}
+            Search results for "${data.term}"
             <span id="clear-span" class="clear-span">( Clear )</span>
         </h1>
     </div>
-    ${data.results.map(result => 
+    ${data.results.map(result =>
     `    <div class="result-container">
             <div class="result__image-container left"><img src="${result.artworkUrl100}"></div>
             <div class="result__data-container">
@@ -56,7 +56,7 @@ const _bindEvents = () => {
 
 /**
  * To update search result in data
- * @param {Array} results 
+ * @param {Array} results
  */
 const _updateResults = (results) => {
     data.results = results;
@@ -64,7 +64,7 @@ const _updateResults = (results) => {
 
 /**
  * To update serach query in data
- * @param {object} request 
+ * @param {object} request
  */
 const _updateRequest = (request) => {
     data.term = request.term;

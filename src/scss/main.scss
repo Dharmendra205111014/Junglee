@@ -73,8 +73,7 @@ input, button {
 }
 
 .search-container{
-    width: 50%;
-    min-width: 400px;
+    width: 550px;
     margin: 0px auto;
     text-align: center;
     position: relative;
@@ -86,14 +85,25 @@ input, button {
         background-repeat: no-repeat;
         background-image: url('../images/arrow.png');
         background-size: contain;
-        margin-left: 114px;
-        margin-top: -45px;
-        transform: rotate(-8deg);
+        margin-left: 5%;
+        margin-top: -40px;
+        transform: rotate(-10deg);
     }
 }
 
 .model {
     display: none;
+    &.open {
+        visibility: visible;
+        -webkit-animation: fadeIn 1s;
+        animation: fadeIn 1s;
+        display: block;
+    }
+    &.close {
+        -webkit-animation: fadeOut 1s;
+        animation: fadeOut 1s;
+        display: none;
+    }
     .model-mask {
         position: fixed;
         margin: 0px;
@@ -133,6 +143,17 @@ input, button {
                 border-radius: 50%;
                 cursor: pointer;
             }
+            .loader {
+                border-radius: 50%;
+                border-top: 3px solid #1d7c05;
+                border-left: 4px solid #1d7c0541;
+                border-right: 5px solid #3d6fdb38;
+                border-bottom: 6px solid #d5772f2c;
+                width: 20px;
+                height: 20px;
+                -webkit-animation: spin 2s linear infinite;
+                animation: spin 2s linear infinite;
+              }
         }
     }
 }
@@ -153,9 +174,19 @@ input, button {
             border: 1px solid lightgray;
             font-size: 14px;
             padding-left: 15px;
+            &.disabled {
+                pointer-events:none;
+                background-color: lightgrey;
+            }
             &.error {
                 border-style: dotted;
                 border-color: red;
+            }
+        }
+        button {
+            &.disabled {
+                pointer-events:none;
+                opacity: 0.5;
             }
         }
         label {
@@ -172,6 +203,9 @@ input, button {
 
 .results-container {
     padding: 50px;
+    position: relative;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
     .result-header {
         .clear-span {
             padding: 10px;
@@ -200,7 +234,6 @@ input, button {
             .result__data-track-name {
                 font-family: "Gotham-bold";
                 line-height: 25px;
-                
             }
             .result__data-artist-name {
                 font-family: "Gotham-bold";
@@ -215,4 +248,33 @@ input, button {
     }
 }
 
+/********************** Animation *****************/
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
 
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}
+
+@-webkit-keyframes fadeOut {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+@keyframes fadeOut {
+    from {opacity: 1;}
+    to {opacity:0 ;}
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
