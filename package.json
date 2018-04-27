@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack -p",
-    "start": "npm run build && python -m SimpleHTTPServer 8000 && echo 'site running at http://localhost:8000/dist/'"
+    "start": "npm run build &&echo 'site will run at http://localhost:8000/dist/' && python -m SimpleHTTPServer 8000"
   },
   "author": "dharmendra.patel26@gmail.com",
   "license": "ISC",
