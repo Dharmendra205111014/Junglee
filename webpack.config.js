@@ -10,7 +10,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].[chunkhash:6].js',
+        filename: 'js/[name].[chunkhash:6].js',
        publicPath: './'
     },
     module: {
@@ -56,6 +56,14 @@ module.exports = {
             favicon: './src/images/index.ico',
             title: 'Assignment',
             inject: 'body'
-        })
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            minChunks: module => module.context && module.context.indexOf('node_modules') !== -1
+          }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: "manifest",
+            minChunks: Infinity
+          })
     ]
 }
